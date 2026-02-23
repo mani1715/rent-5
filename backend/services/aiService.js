@@ -1,10 +1,17 @@
 const OpenAI = require('openai');
 
+// Use INTEGRATION_PROXY_URL from environment or default
+const baseURL = process.env.INTEGRATION_PROXY_URL 
+  ? `${process.env.INTEGRATION_PROXY_URL}/openai/v1`
+  : 'https://integrations.emergentagent.com/openai/v1';
+
 // Initialize OpenAI client with Emergent Universal Key
 const client = new OpenAI({
   apiKey: process.env.EMERGENT_LLM_KEY,
-  baseURL: 'https://integrations.emergentagent.com/api/v1'
+  baseURL: baseURL
 });
+
+console.log('AI Service initialized with baseURL:', baseURL);
 
 // Export async function to generate description
 async function generateDescription(prompt) {
@@ -14,7 +21,7 @@ async function generateDescription(prompt) {
       messages: [
         {
           role: 'system',
-          content: 'You are a professional real estate copywriter. Write compelling, attractive property descriptions that highlight key features and appeal to potential renters.'
+          content: 'You are a professional real estate copywriter. Write compelling, attractive property descriptions that highlight key features and appeal to potential renters. Keep descriptions around 150 words.'
         },
         {
           role: 'user',
@@ -27,12 +34,12 @@ async function generateDescription(prompt) {
 
     return response.choices[0].message.content;
   } catch (error) {
-    console.error('Error generating description:', error);
+    console.error('Error generating description:', error.message);
     throw error;
   }
 }
 
-// Test AI service on startup if key is available
+// Log AI service status on startup
 if (process.env.EMERGENT_LLM_KEY && process.env.EMERGENT_LLM_KEY.length > 0) {
   console.log('EMERGENT_LLM_KEY loaded: Yes - AI features enabled');
 } else {

@@ -1,39 +1,42 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+const OpenAI = require('openai');
 
-// Verify GEMINI_API_KEY is loaded
-console.log('GEMINI_API_KEY loaded:', process.env.GEMINI_API_KEY ? 'Yes' : 'No');
-
-// Initialize GoogleGenerativeAI with API key from environment
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-// Get the model
-const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+// Initialize OpenAI client with Emergent Universal Key
+const client = new OpenAI({
+  apiKey: process.env.EMERGENT_LLM_KEY,
+  baseURL: 'https://integrations.emergentagent.com/api/v1'
+});
 
 // Export async function to generate description
 async function generateDescription(prompt) {
   try {
-    const result = await model.generateContent(prompt);
-    return result.response.text();
+    const response = await client.chat.completions.create({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'system',
+          content: 'You are a professional real estate copywriter. Write compelling, attractive property descriptions that highlight key features and appeal to potential renters.'
+        },
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+      max_tokens: 500,
+      temperature: 0.7
+    });
+
+    return response.choices[0].message.content;
   } catch (error) {
     console.error('Error generating description:', error);
     throw error;
   }
 }
 
-// Only test AI if API key is provided
-if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 0) {
-  (async () => {
-    try {
-      console.log('Testing AI service...');
-      const testPrompt = 'Write a short description for a 2BHK apartment in Hyderabad.';
-      const result = await generateDescription(testPrompt);
-      console.log('AI Response:', result);
-    } catch (error) {
-      console.log('AI Test failed:', error.message);
-    }
-  })();
+// Test AI service on startup if key is available
+if (process.env.EMERGENT_LLM_KEY && process.env.EMERGENT_LLM_KEY.length > 0) {
+  console.log('EMERGENT_LLM_KEY loaded: Yes - AI features enabled');
 } else {
-  console.log('GEMINI_API_KEY not provided - AI features disabled');
+  console.log('EMERGENT_LLM_KEY not provided - AI features disabled');
 }
 
 module.exports = {

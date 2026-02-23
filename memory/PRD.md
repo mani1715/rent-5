@@ -84,7 +84,14 @@ Clone and set up the RentEase rental marketplace application from https://github
 - Multi-language support
 - Advanced analytics dashboard
 
+## AI Feature Status (Feb 23, 2026)
+- **AI-Powered Property Description Generator**: ENABLED
+- Uses Emergent Universal Key with GPT-4.1 model
+- Endpoint: `POST /api/ai/generate-description`
+- Implementation: Python backend using `emergentintegrations` library
+- Location: `/app/backend/services/ai_generator.py`
+
 ## Next Tasks
-1. User can proceed to add Gemini API key for AI-powered property descriptions
-2. Add more sample properties for demo
-3. Consider image upload functionality enhancement
+1. Add more sample properties for demo
+2. Consider image upload functionality enhancement
+3. Test AI generation from frontend Add Listing page

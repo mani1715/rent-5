@@ -19,22 +19,22 @@ async function generateDescription(prompt) {
     const pythonScript = path.join(__dirname, 'ai_generator.py');
     const pythonPath = '/root/.venv/bin/python3';
     
-    const process = spawn(pythonPath, [pythonScript, JSON.stringify(promptData)], {
+    const childProcess = spawn(pythonPath, [pythonScript, JSON.stringify(promptData)], {
       env: { ...process.env, EMERGENT_LLM_KEY: process.env.EMERGENT_LLM_KEY }
     });
 
     let stdout = '';
     let stderr = '';
 
-    process.stdout.on('data', (data) => {
+    childProcess.stdout.on('data', (data) => {
       stdout += data.toString();
     });
 
-    process.stderr.on('data', (data) => {
+    childProcess.stderr.on('data', (data) => {
       stderr += data.toString();
     });
 
-    process.on('close', (code) => {
+    childProcess.on('close', (code) => {
       if (code !== 0) {
         console.error('Python script error:', stderr);
         reject(new Error(`AI generation failed: ${stderr}`));
@@ -54,7 +54,7 @@ async function generateDescription(prompt) {
       }
     });
 
-    process.on('error', (err) => {
+    childProcess.on('error', (err) => {
       reject(new Error(`Failed to spawn Python process: ${err.message}`));
     });
   });

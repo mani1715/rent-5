@@ -20,17 +20,21 @@ async function generateDescription(prompt) {
   }
 }
 
-// Temporary test: Call generateDescription with static prompt
-(async () => {
-  try {
-    console.log('Testing AI service...');
-    const testPrompt = 'Write a short description for a 2BHK apartment in Hyderabad.';
-    const result = await generateDescription(testPrompt);
-    console.log('AI Response:', result);
-  } catch (error) {
-    console.log('AI Test failed:', error.message);
-  }
-})();
+// Only test AI if API key is provided
+if (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY.length > 0) {
+  (async () => {
+    try {
+      console.log('Testing AI service...');
+      const testPrompt = 'Write a short description for a 2BHK apartment in Hyderabad.';
+      const result = await generateDescription(testPrompt);
+      console.log('AI Response:', result);
+    } catch (error) {
+      console.log('AI Test failed:', error.message);
+    }
+  })();
+} else {
+  console.log('GEMINI_API_KEY not provided - AI features disabled');
+}
 
 module.exports = {
   generateDescription
